@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEC - Maquette claire</title>
+<meta name="description" content="Maquette de design (version claire) - VEC, Vayres Embouteillage & Conditionnement.">
+
+<!-- Thème appliqué avant le rendu (évite le flash) : ?theme=dark|light, sinon choix mémorisé, sinon clair -->
+<script>
+  try {
+    const t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('vec-theme');
+    if (t === 'dark') document.documentElement.dataset.theme = 'dark';
+  } catch (e) {}
+  // Essai de police des titres : ?font=fraunces|cormorant|instrument|playfair|manrope|source (sinon Outfit)
+  (function () {
+    const F = {
+      fraunces:   ['Fraunces:opsz,wght@9..144,500;9..144,600', '"Fraunces", Georgia, serif', 600, '-0.02em'],
+      cormorant:  ['Cormorant+Garamond:wght@500;600;700', '"Cormorant Garamond", Georgia, serif', 600, '-0.005em'],
+      instrument: ['Instrument+Serif', '"Instrument Serif", Georgia, serif', 400, '-0.01em'],
+      playfair:   ['Playfair+Display:wght@500;600;700', '"Playfair Display", Georgia, serif', 600, '-0.015em'],
+      manrope:    ['Manrope:wght@600;700;800', '"Manrope", system-ui, sans-serif', 700, '-0.035em'],
+      source:     ['Source+Serif+4:opsz,wght@8..60,600', '"Source Serif 4", Georgia, serif', 600, '-0.01em']
+    };
+    const k = new URLSearchParams(location.search).get('font'), f = F[k];
+    if (!f) return;
+    document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=' + f[0] + '&display=swap">');
+    const r = document.documentElement.style;
+    r.setProperty('--title-font', f[1]); r.setProperty('--title-weight', f[2]); r.setProperty('--title-tracking', f[3]);
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+
+<style>
+  /* ---------- Jetons de couleur : clair (défaut) ---------- */
+  :root {
+    --bg: #f7f5ef;          /* crème */
+    --surface: #ffffff;     /* cartes */
+    --surface-2: #eeebe2;   /* sable - sections alternées */
+    --fg: #1f2326;          /* texte principal */
+    --muted: #5d6368;       /* texte secondaire */
+    --line: #e3dfd4;
+    --accent: #4f7f12;      /* vert texte / icônes (contraste AA) */
+    --accent-bright: #84bd1f; /* vert logo - décor */
+    --accent-soft: #edf3e0;
+    --btn: #4f7f12; --btn-fg: #ffffff; --btn-hover: #3e6a0b;
+    --header: rgba(255,255,255,.94);
+    --shadow: 0 24px 48px -28px rgba(31,35,38,.28);
+    /* Voile du hero : crème, dense à gauche, transparent à droite */
+    --veil-x: linear-gradient(90deg, rgba(247,245,239,.97) 0%, rgba(247,245,239,.93) 45%, rgba(247,245,239,.6) 68%, rgba(247,245,239,.12) 100%);
+    --veil-y: linear-gradient(to top, #f7f5ef 0%, rgba(247,245,239,0) 30%);
+    --veil-mobile: rgba(247,245,239,.84);
+    --hero-sub: #4f7f12;
+    color-scheme: light;
+  }
+  /* ---------- Jetons de couleur : sombre ---------- */
+  :root[data-theme="dark"] {
+    --bg: #111315;
+    --surface: #181b1e;
+    --surface-2: #1d2124;
+    --fg: #f2f0e9;
+    --muted: #a3a9ae;
+    --line: #2b3035;
+    --accent: #a4d65a;
+    --accent-bright: #84bd1f;
+    --accent-soft: rgba(132,189,31,.12);
+    --btn: #84bd1f; --btn-fg: #111315; --btn-hover: #9ccf3a;
+    --header: rgba(17,19,21,.86);
+    --shadow: 0 24px 48px -28px rgba(0,0,0,.7);
+    --veil-x: linear-gradient(90deg, rgba(17,19,21,.85) 0%, rgba(17,19,21,.55) 45%, rgba(17,19,21,.15) 100%);
+    --veil-y: linear-gradient(to top, #111315 0%, rgba(17,19,21,.7) 35%, rgba(17,19,21,.2) 100%);
+    --veil-mobile: rgba(17,19,21,.72);
+    --hero-sub: rgba(242,240,233,.6);
+    color-scheme: dark;
+  }
+</style>
+
+<style type="text/tailwindcss">
+  @theme inline {
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-surface-2: var(--surface-2);
+    --color-fg: var(--fg);
+    --color-muted: var(--muted);
+    --color-line: var(--line);
+    --color-accent: var(--accent);
+    --color-accent-bright: var(--accent-bright);
+    --color-accent-soft: var(--accent-soft);
+    --font-display: var(--title-font, "Outfit", system-ui, sans-serif);
+    --font-sans: "Inter", system-ui, sans-serif;
+  }
+  body { @apply bg-bg text-fg font-sans antialiased; transition: background-color .4s, color .4s; }
+  @utility eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.24em] text-accent; }
+  @utility h-section { @apply font-display font-semibold text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.1] tracking-[-0.01em]; }
+  @utility btn-primary {
+    @apply inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-300;
+    background: var(--btn); color: var(--btn-fg);
+    &:hover { background: var(--btn-hover); }
+  }
+  @utility btn-outline { @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface px-6 py-3 text-sm font-semibold text-fg transition duration-300 hover:border-accent hover:text-accent; }
+  @utility icon-tile { @apply grid size-11 shrink-0 place-items-center rounded-full bg-accent-soft text-accent; }
+  @utility card {
+    @apply rounded-2xl border border-line bg-surface p-7 transition duration-500 hover:-translate-y-1;
+    &:hover { box-shadow: var(--shadow); }
+  }
+  @utility nav-link {
+    @apply relative text-sm font-medium text-muted transition hover:text-fg;
+    &::after { content:""; @apply absolute -bottom-1.5 left-0 h-px w-0 bg-accent transition-all duration-300; }
+    &:hover::after { @apply w-full; }
+  }
+  @utility pill-btn { @apply grid size-10 place-items-center rounded-full border border-line bg-surface text-fg transition hover:border-accent hover:text-accent; }
+</style>
+
+<style>
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal[data-delay="1"] { transition-delay: .1s; }
+  .reveal[data-delay="2"] { transition-delay: .2s; }
+  .reveal[data-delay="3"] { transition-delay: .3s; }
+  @keyframes slowzoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+  .hero-img { animation: slowzoom 9s cubic-bezier(.2,.7,.2,1) forwards; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .hero-img { animation: none; }
+  }
+  .gallery-item img { transition: transform 1.2s cubic-bezier(.2,.7,.2,1), filter .5s; }
+  .gallery-item:hover img { transform: scale(1.04); }
+  /* Légendes de la galerie : l'étiquette s'agrandit en carte (survol / focus / toucher) */
+  :root { --cap-bg: rgba(255,255,255,.9); --cap-fg: #1f2326; --cap-muted: #4a5055; }
+  :root[data-theme="dark"] { --cap-bg: rgba(24,27,30,.86); --cap-fg: #f2f0e9; --cap-muted: #b4bac0; }
+  .cap { position: absolute; left: 1rem; bottom: 1rem; max-width: calc(100% - 2rem); border-radius: 1.25rem;
+         background: var(--cap-bg); color: var(--cap-fg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+         box-shadow: 0 10px 30px -14px rgba(0,0,0,.45); overflow: hidden;
+         width: var(--cap-closed, auto); transition: width .45s cubic-bezier(.2,.7,.2,1); }
+  .cap-btn { display: flex; width: 100%; white-space: nowrap; align-items: center; justify-content: space-between; gap: .75rem; padding: .45rem .45rem .45rem .9rem;
+             font-size: .75rem; font-weight: 600; text-align: left; cursor: pointer; border-radius: inherit; }
+  .cap-btn:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+  .cap-plus { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; flex-shrink: 0; border-radius: 999px;
+              background: var(--accent-bright); color: #111315; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+  .cap-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s cubic-bezier(.2,.7,.2,1); }
+  .cap-body > div { overflow: hidden; }
+  /* Largeur fixe du texte = largeur ouverte : aucun reflow pendant l'animation */
+  .cap-body p { width: var(--cap-open, 21rem); padding: 0 .9rem .85rem; font-size: .8rem; line-height: 1.5; color: var(--cap-muted); opacity: 0; transition: opacity .3s; }
+  .gallery-item.open .cap { width: var(--cap-open, 21rem); }
+  .gallery-item.open .cap-body { grid-template-rows: 1fr; }
+  .gallery-item.open .cap-body p { opacity: 1; transition-delay: .15s; }
+  .gallery-item.open .cap-plus { transform: rotate(45deg); }
+  .gallery-item.open img { filter: brightness(.82); }
+  @media (hover: hover) {
+    .gallery-item:hover .cap, .gallery-item:focus-within .cap { width: var(--cap-open, 21rem); }
+    .gallery-item:hover .cap-body, .gallery-item:focus-within .cap-body { grid-template-rows: 1fr; }
+    .gallery-item:hover .cap-body p, .gallery-item:focus-within .cap-body p { opacity: 1; transition-delay: .15s; }
+    .gallery-item:hover .cap-plus, .gallery-item:focus-within .cap-plus { transform: rotate(45deg); }
+    .gallery-item:hover img { filter: brightness(.82); }
+  }
+  @media (prefers-reduced-motion: reduce) { .cap, .cap-body, .cap-body p, .cap-plus { transition: none; } }
+  #header { background: var(--header); transition: box-shadow .3s, background-color .4s; }
+  #header.scrolled { box-shadow: 0 1px 0 var(--line), 0 12px 32px -24px rgba(0,0,0,.35); }
+  .lang-btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+  /* Logo et icône selon le thème */
+  .logo-dark, .icon-sun { display: none; }
+  [data-theme="dark"] .logo-light, [data-theme="dark"] .icon-moon { display: none; }
+  [data-theme="dark"] .logo-dark, [data-theme="dark"] .icon-sun { display: block; }
+  /* Photos un peu adoucies en sombre */
+  [data-theme="dark"] .photo { filter: brightness(.92); }
+  .hero-veil { background: var(--veil-y), var(--veil-x); }
+  @media (max-width: 767px) { .hero-veil { background: var(--veil-y), var(--veil-mobile); } }
+  .hero-sub { color: var(--hero-sub); }
+  /* Bulles « Notre expertise » */
+  .chip { display: flex; align-items: center; gap: .65rem; padding: .5rem 1.1rem .5rem .5rem; border-radius: 999px;
+          border: 1px solid var(--line); background: var(--surface); font-weight: 500; font-size: .95rem; cursor: default;
+          transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, background-color .35s, box-shadow .35s, color .35s; }
+  .chip-icon { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+               transition: background-color .35s, color .35s, transform .5s cubic-bezier(.2,.7,.2,1); }
+  .chip:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: var(--shadow); color: var(--accent); }
+  .chip:hover .chip-icon { background: var(--btn); color: var(--btn-fg); transform: rotate(-12deg) scale(1.08); }
+  @media (prefers-reduced-motion: reduce) { .chip, .chip-icon { transition: none; } .chip:hover, .chip:hover .chip-icon { transform: none; } }
+  /* Écrans d'ordinateur peu hauts (ex. 1366×768) : on resserre pour que les chiffres restent visibles */
+  @media (min-width: 1024px) and (max-height: 860px) {
+    .hero-title { font-size: 3.5rem !important; }
+    .hero-lead { margin-top: 1.25rem !important; }
+    .hero-cta { margin-top: 1.75rem !important; }
+    .hero-stats { margin-top: 2rem !important; }
+  }
+  .hero-stats { background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  /* Police des titres réglable (essais) */
+  .font-display, .h-section { font-weight: var(--title-weight, 600) !important; letter-spacing: var(--title-tracking, -0.03em) !important; }
+  /* Bloc devis : contour lumineux vert qui tourne au survol (inspiré d'Uiverse, ElSombrero2 - MIT) */
+  .glow-card { position: relative; isolation: isolate; overflow: hidden; padding: 3px; background: var(--line);
+               box-shadow: var(--shadow); transition: box-shadow .5s; }
+  .glow-card::before { content: ""; position: absolute; left: 50%; top: 50%; width: 2400px; height: 2400px; margin: -1200px 0 0 -1200px; z-index: -1;
+               background: conic-gradient(from 0deg, transparent 0 40%, rgba(132,189,31,.35) 55%, #4f7f12 68%, #84bd1f 78%, #d4ef8f 83%, #84bd1f 88%, transparent 97%);
+               opacity: 0; transition: opacity .5s; animation: glow-spin 6s linear infinite; animation-play-state: paused; }
+  .glow-card:hover::before, .glow-card:focus-within::before { opacity: 1; animation-play-state: running; }
+  .glow-card:hover, .glow-card:focus-within { box-shadow: var(--shadow), 0 0 70px -14px rgba(132,189,31,.6); }
+  .glow-inner { position: relative; border-radius: calc(1.5rem - 3px); }
+  @keyframes glow-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .glow-card::before { animation: none; background: #84bd1f; }
+  }
+  .mock-flag { position: fixed; right: 12px; bottom: 12px; z-index: 60; }
+</style>
+</head>
+
+<body>
+
+<!-- ============ HEADER ============ -->
+<header id="header" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md">
+  <div class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-5 lg:px-8">
+    <a href="#top" class="shrink-0" aria-label="VEC - accueil">
+      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage & Conditionnement" class="logo-light h-12 w-auto">
+      <img src="logo-vec-dark.png" alt="VEC - Vayres Embouteillage & Conditionnement" class="logo-dark h-12 w-auto">
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex" aria-label="Navigation principale">
+      <a href="#savoir-faire" class="nav-link" data-en="About">Savoir-faire</a>
+      <a href="#conditionnement" class="nav-link" data-en="Packaging">Conditionnement</a>
+      <a href="#services" class="nav-link" data-en="Services">Services</a>
+      <a href="#galerie" class="nav-link" data-en="Facility">Le site</a>
+      <a href="#qualite" class="nav-link" data-en="Quality">Qualité</a>
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-3">
+      <div class="hidden items-center rounded-full border border-line bg-surface p-0.5 text-xs font-semibold sm:flex" role="group" aria-label="Langue">
+        <button class="lang-btn rounded-full px-2.5 py-1 transition" data-lang="fr" aria-pressed="true">FR</button>
+        <button class="lang-btn rounded-full px-2.5 py-1 transition" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="theme-toggle pill-btn" aria-label="Basculer le thème clair / sombre" title="Clair / sombre">
+        <i data-lucide="moon" class="icon-moon size-[18px]"></i>
+        <i data-lucide="sun" class="icon-sun size-[18px]"></i>
+      </button>
+      <a href="#contact" class="btn-primary hidden !py-2.5 sm:inline-flex" data-en="Request a quote">Demander un devis</a>
+      <button id="menuBtn" class="pill-btn lg:hidden" aria-label="Menu" aria-expanded="false">
+        <i data-lucide="menu" class="size-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobileMenu" class="hidden border-t border-line bg-bg lg:hidden">
+    <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4 text-base font-medium">
+      <a href="#savoir-faire" class="py-2" data-en="About">Savoir-faire</a>
+      <a href="#conditionnement" class="py-2" data-en="Packaging">Conditionnement</a>
+      <a href="#services" class="py-2" data-en="Services">Services</a>
+      <a href="#galerie" class="py-2" data-en="Facility">Le site</a>
+      <a href="#qualite" class="py-2" data-en="Quality">Qualité</a>
+      <div class="mt-3 flex items-center gap-3">
+        <div class="flex items-center rounded-full border border-line bg-surface p-0.5 text-xs font-semibold" role="group" aria-label="Langue">
+          <button class="lang-btn rounded-full px-2.5 py-1" data-lang="fr" aria-pressed="true">FR</button>
+          <button class="lang-btn rounded-full px-2.5 py-1" data-lang="en" aria-pressed="false">EN</button>
+        </div>
+        <a href="#contact" class="btn-primary !py-2.5" data-en="Request a quote">Demander un devis</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ HERO ============ -->
+<section class="hero relative isolate flex min-h-svh items-end overflow-hidden pt-28">
+  <img src="photos/VEC_-30.jpg" alt="Ligne d'embouteillage VEC à Vayres" class="photo hero-img absolute inset-0 -z-20 size-full object-cover object-[70%_center]">
+  <div class="hero-veil absolute inset-0 -z-10"></div>
+
+  <div class="mx-auto w-full max-w-7xl px-5 pb-8 lg:px-8 lg:pb-12">
+    <p class="eyebrow reveal" data-en="Contract bottling &amp; packaging since 1997">Prestataire de conditionnement depuis 1997</p>
+    <h1 class="hero-title reveal mt-5 max-w-4xl font-display text-[2.6rem] font-semibold leading-[1.04] tracking-[-0.015em] sm:text-6xl lg:text-7xl" data-delay="1"
+        data-en="From cellar to pallet,<br><span class='hero-sub'>end-to-end support.</span>">
+      Du chai à la palette,<br><span class="hero-sub">un accompagnement de&nbsp;A&nbsp;à&nbsp;Z.</span>
+    </h1>
+    <p class="hero-lead reveal mt-7 max-w-xl text-base leading-relaxed text-fg/80 sm:text-lg" data-delay="2"
+       data-en="Contract bottler between Bordeaux and Libourne: bottles, Bag-in-Box, dressing, palletising and shipping - on a certified industrial line, without the investment.">
+      Embouteilleur à façon entre Bordeaux et Libourne : mise en bouteille, Bag in Box, habillage, palettisation et expédition - sur un outil industriel certifié, sans avoir à le financer.
+    </p>
+    <div class="hero-cta reveal mt-10 flex flex-wrap items-center gap-3" data-delay="3">
+      <a href="#contact" class="btn-primary"><span data-en="Free quote">Devis offert</span><i data-lucide="arrow-right" class="size-4"></i></a>
+      <a href="#conditionnement" class="btn-outline" data-en="Our services">Découvrir nos prestations</a>
+    </div>
+
+    <div class="hero-stats reveal mt-12 grid grid-cols-2 overflow-hidden rounded-2xl border border-line lg:mt-14 lg:grid-cols-4">
+      <div class="border-r border-b border-line p-5 lg:border-b-0 lg:px-7 lg:py-6">
+        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="30000">30 000</span></p>
+        <p class="mt-2 text-sm text-muted" data-en="bottles per day<br>filled &amp; dressed">cols par jour<br>tirage &amp; habillage</p>
+      </div>
+      <div class="border-b border-line p-5 lg:border-r lg:border-b-0 lg:px-7 lg:py-6">
+        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="16000">16 000</span></p>
+        <p class="mt-2 text-sm text-muted" data-en="Bag-in-Box per day<br>i.e. 2 full trucks a day">BIB par jour<br>soit 2 camions complets / jour</p>
+      </div>
+      <div class="border-r border-line p-5 lg:px-7 lg:py-6">
+        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="50">50</span> <span class="text-2xl">hL</span></p>
+        <p class="mt-2 text-sm text-muted" data-en="minimum<br>production run">minimum<br>de production</p>
+      </div>
+      <div class="p-5 lg:px-7 lg:py-6">
+        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="1997" data-plain>1997</span></p>
+        <p class="mt-2 text-sm text-muted" data-en="bottling expertise<br>in the Bordeaux area">savoir-faire<br>en Bordelais</p>
+  </div>
+  </div>
+</section>
+
+<!-- ============ SAVOIR-FAIRE ============ -->
+<section id="savoir-faire" class="scroll-mt-18 py-24 lg:py-32">
+  <div class="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-12 lg:gap-20 lg:px-8">
+    <div class="lg:col-span-6">
+      <p class="eyebrow reveal" data-en="Who we are">Qui sommes-nous</p>
+      <h2 class="h-section reveal mt-4" data-delay="1" data-en="One partner,<br>from bulk to pallet.">Un seul interlocuteur,<br>du vrac à la palette.</h2>
+      <div class="reveal mt-7 space-y-5 text-[17px] leading-relaxed text-muted" data-delay="2">
+        <p data-en="As a contract bottler, VEC links your wines to your customers: bulk reception and control, cellar preparation, bottling or Bag-in-Box, dressing, casing, palletising and shipping.">Embouteilleur à façon, VEC fait le lien entre vos produits et vos clients : réception et contrôle du vrac, préparation en chai, mise en bouteille ou en Bag in Box, habillage, mise en carton, palettisation et expédition.</p>
+        <p data-en="Specialists in still whites and rosés, we also buy bulk wine, advise on blends, source dry goods, track stock and bonded paperwork, and store your wines in our climate-controlled warehouses. One partner from cellar to pallet, in France, Europe and worldwide.">Spécialistes des blancs et rosés tranquilles, nous achetons aussi le vrac, conseillons les assemblages, sourçons les matières sèches, suivons les stocks et la régie, et stockons les vins dans nos entrepôts climatisés. Un seul interlocuteur du chai à la palette, en France, en Europe comme au grand export.</p>
+      </div>
+      <ul class="reveal mt-9 grid gap-3 sm:grid-cols-2" data-delay="3">
+        <li class="flex items-start gap-3 text-sm font-medium"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-accent"></i><span data-en="Certified industrial line">Outil industriel certifié</span></li>
+        <li class="flex items-start gap-3 text-sm font-medium"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-accent"></i><span data-en="Control plan at every station">Plan de contrôle à chaque poste</span></li>
+        <li class="flex items-start gap-3 text-sm font-medium"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-accent"></i><span data-en="Full traceability">Traçabilité complète</span></li>
+        <li class="flex items-start gap-3 text-sm font-medium"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-accent"></i><span data-en="No capital investment">Aucun investissement à porter</span></li>
+      </ul>
+    </div>
+
+    <div class="relative lg:col-span-6">
+      <div class="reveal overflow-hidden rounded-3xl">
+        <img src="photos/VEC_-11.jpg" alt="Opérateur chargeant des bouteilles vides sur la ligne" class="photo aspect-[4/5] w-full object-cover" loading="lazy">
+      </div>
+      <div class="reveal absolute -bottom-8 left-4 max-w-[15rem] rounded-2xl border border-line bg-surface p-5 sm:-left-8" style="box-shadow: var(--shadow)" data-delay="2">
+        <div class="flex items-center gap-3">
+          <span class="icon-tile !size-9"><i data-lucide="map-pin" class="size-4"></i></span>
+          <p class="text-sm font-semibold leading-tight" data-en="Between Bordeaux<br>&amp; Libourne">Entre Bordeaux<br>&amp; Libourne</p>
+        </div>
+        <p class="mt-3 text-xs leading-relaxed text-muted" data-en="At the heart of the vineyard, 25 min from the Bordeaux ring road.">Au cœur du vignoble, à 25 min de la rocade bordelaise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONDITIONNEMENT ============ -->
+<section id="conditionnement" class="scroll-mt-18 border-y border-line bg-surface py-24 lg:py-32">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+      <div>
+        <p class="eyebrow reveal" data-en="Packaging">Conditionnement</p>
+        <h2 class="h-section reveal mt-4 max-w-2xl" data-delay="1" data-en="Every format,<br>at industrial pace.">Tous les formats,<br>à cadence industrielle.</h2>
+      </div>
+      <p class="reveal max-w-sm text-muted" data-delay="2" data-en="Minimum run: 50 hL. Special requests reviewed case by case.">Minimum de production : 50 hL. Demandes spéciales étudiées au cas par cas.</p>
+    </div>
+
+    <div class="mt-14 grid gap-5 md:grid-cols-3">
+      <article class="card reveal !bg-bg">
+        <span class="icon-tile"><i data-lucide="wine" class="size-5"></i></span>
+        <h3 class="mt-6 font-display text-2xl font-semibold" data-en="Bottling">Mise en bouteille</h3>
+        <p class="mt-1 text-sm font-medium text-accent" data-en="25–30,000 bottles / day">25 à 30 000 cols / jour</p>
+        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+          <li data-en="Airline quarter · 37.5 cL · 75 cL · magnum">Quart aviation · 37,5 cL · 75 cL · magnum</li>
+          <li data-en="Burgundy &amp; Bordeaux bottles">Bourgogne et bordelaise</li>
+          <li data-en="Screw cap &amp; cork">Vis et bouchon</li>
+          <li data-en="Bottling / dressing, cork-finished &amp; re-dressing">Tirage, habillage, tiré-bouché et reprise TB</li>
+          <li data-en="Upright cases of 6 or 12, automatic crates">Cartons debout de 6 ou 12, casiers en automatique</li>
+        </ul>
+      </article>
+      <article class="card reveal !bg-bg" data-delay="1">
+        <span class="icon-tile"><i data-lucide="package" class="size-5"></i></span>
+        <h3 class="mt-6 font-display text-2xl font-semibold">Bag in Box</h3>
+        <p class="mt-1 text-sm font-medium text-accent" data-en="16,000 BIB / day">16 000 BIB / jour</p>
+        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+          <li data-en="Slim format">Format slim</li>
+          <li>3 L · 5 L · 10 L</li>
+          <li data-en="Shipper case or quarter pallet">Carton de regroupement ou quart de palette</li>
+          <li data-en="2 full trucks of 33 pallets / day">2 camions complets de 33 palettes / jour</li>
+        </ul>
+      </article>
+      <article class="card reveal !bg-bg" data-delay="2">
+        <span class="icon-tile"><i data-lucide="truck" class="size-5"></i></span>
+        <h3 class="mt-6 font-display text-2xl font-semibold" data-en="Palletising &amp; shipping">Palettisation &amp; expédition</h3>
+        <p class="mt-1 text-sm font-medium text-accent" data-en="France, Europe &amp; export">France, Europe &amp; grand export</p>
+        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+          <li data-en="Euro, VMF, CHEP pallets">Palettes Europe, VMF, CHEP</li>
+          <li data-en="Inbound &amp; outbound scheduling">Organisation des réceptions et expéditions</li>
+          <li data-en="Flexitank unloading">Déchargement de flexitanks</li>
+          <li data-en="Bulk container loading">Chargement de containers vrac</li>
+        </ul>
+      </article>
+    </div>
+
+    <!-- Carte dédiée : sans alcool -->
+    <article class="reveal mt-5 grid overflow-hidden rounded-2xl border border-accent/25 bg-accent-soft lg:grid-cols-2">
+      <div class="relative min-h-72 lg:min-h-full">
+        <img src="photos/VEC_-14.jpg" alt="Tireuse MBF sous carter vitré" class="photo absolute inset-0 size-full object-cover" loading="lazy">
+        <span class="absolute left-6 top-6 rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#4f7f12] backdrop-blur">0,0 % – 0,5 %</span>
+      </div>
+      <div class="p-8 sm:p-12 lg:p-14">
+        <p class="eyebrow" data-en="Dedicated expertise">Expertise dédiée</p>
+        <h3 class="mt-4 font-display text-3xl font-semibold leading-tight sm:text-4xl" data-en="Alcohol-free &amp;<br>dealcoholised wines">Vins sans alcool<br>&amp; désalcoolisés</h3>
+        <p class="mt-5 leading-relaxed text-muted" data-en="Low- and no-alcohol wines are more fragile than traditional wines. We bottle them under a dedicated protocol, from bulk reception to the finished pallet.">Plus fragiles qu'un vin traditionnel, les vins désalcoolisés demandent un protocole spécifique. Nous les conditionnons avec un process dédié, de la réception du vrac à la palette.</p>
+        <ul class="mt-8 grid gap-4 sm:grid-cols-2">
+          <li class="flex gap-3"><i data-lucide="flask-conical" class="mt-0.5 size-5 shrink-0 text-accent"></i><span class="text-sm font-medium" data-en="Enhanced microbiological control">Contrôle microbiologique renforcé</span></li>
+          <li class="flex gap-3"><i data-lucide="filter" class="mt-0.5 size-5 shrink-0 text-accent"></i><span class="text-sm font-medium" data-en="Sterile filtration before filling">Filtration stérilisante avant tirage</span></li>
+          <li class="flex gap-3"><i data-lucide="sparkles" class="mt-0.5 size-5 shrink-0 text-accent"></i><span class="text-sm font-medium" data-en="Reinforced line sanitation">Hygiène de ligne renforcée</span></li>
+          <li class="flex gap-3"><i data-lucide="tag" class="mt-0.5 size-5 shrink-0 text-accent"></i><span class="text-sm font-medium" data-en="Regulatory labelling support">Accompagnement étiquetage réglementaire</span></li>
+        </ul>
+        <a href="#contact" class="btn-primary mt-10"><span data-en="Discuss your 0% project">Parler de votre projet 0 %</span><i data-lucide="arrow-right" class="size-4"></i></a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SERVICES 360 ============ -->
+<section id="services" class="scroll-mt-18 py-24 lg:py-32">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="max-w-2xl">
+      <p class="eyebrow reveal" data-en="360° support">Un accompagnement 360°</p>
+      <h2 class="h-section reveal mt-4" data-delay="1" data-en="The whole production chain,<br>under one roof.">Toute la chaîne de production,<br>sous un même toit.</h2>
+      <p class="reveal mt-6 text-lg text-muted" data-delay="2" data-en="Technical, oenology, quality and logistics: we take care of everything around the bottling line.">Technique, œnologie, qualité et logistique : nous prenons en charge tout ce qui entoure la ligne de conditionnement.</p>
+    </div>
+
+    <div class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      <div class="reveal bg-surface p-8">
+        <span class="icon-tile"><i data-lucide="grape" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Oenology">Œnologie</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Bulk purchasing, tasting and oenological advice.">Achat de vrac, dégustation et conseil œnologique.</p>
+      </div>
+      <div class="reveal bg-surface p-8" data-delay="1">
+        <span class="icon-tile"><i data-lucide="container" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Cellar">Chai</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Reception, blending, filtration and bulk preparation.">Réception, assemblage, filtration et préparation du vrac.</p>
+      </div>
+      <div class="reveal bg-surface p-8" data-delay="2">
+        <span class="icon-tile"><i data-lucide="boxes" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Dry goods">Matières sèches</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Full sourcing of bottles, closures, labels and cases.">Sourcing complet : verre, bouchage, étiquettes, cartons.</p>
+      </div>
+      <div class="reveal bg-surface p-8">
+        <span class="icon-tile"><i data-lucide="clipboard-check" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Quality">Qualité</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Analytical monitoring, regulatory watch, control plan at every station.">Suivi analytique, veille réglementaire, plan de contrôle à tous les postes.</p>
+      </div>
+      <div class="reveal bg-surface p-8" data-delay="1">
+        <span class="icon-tile"><i data-lucide="warehouse" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Climate-controlled storage">Entrepôt climatisé</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Bulk, cork-finished stock and finished goods.">Vrac, box de tiré-bouché et produits finis.</p>
+      </div>
+      <div class="reveal bg-surface p-8" data-delay="2">
+        <span class="icon-tile"><i data-lucide="file-text" class="size-5"></i></span>
+        <h3 class="mt-5 text-lg font-semibold" data-en="Admin &amp; bonded paperwork">Administratif &amp; régie</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Stock tracking, production reports and excise management.">Suivi des stocks, rapports de production et régie.</p>
+      </div>
+    </div>
+
+    <div class="reveal mt-16 flex flex-col items-center gap-6 border-t border-line pt-12 text-center">
+      <p class="eyebrow" data-en="Our expertise">Notre expertise</p>
+      <ul class="grid w-full max-w-5xl gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
+        <li class="chip"><span class="chip-icon"><i data-lucide="gauge" class="size-4"></i></span><span data-en="High throughput">Cadences élevées</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="settings-2" class="size-4"></i></span><span data-en="Technical versatility">Polyvalence technique</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="zap" class="size-4"></i></span><span data-en="Responsiveness">Réactivité</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="ruler" class="size-4"></i></span><span data-en="Tailor-made projects">Projet sur mesure</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="hand" class="size-4"></i></span><span data-en="Manual operations">Chantiers manuels</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="globe" class="size-4"></i></span><span data-en="France, Europe &amp; export">France, Europe &amp; grand export</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALERIE ============ -->
+<section id="galerie" class="scroll-mt-18 bg-surface-2 py-24 lg:py-32">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+      <div>
+        <p class="eyebrow reveal" data-en="Our facility">Le site de Vayres</p>
+        <h2 class="h-section reveal mt-4 max-w-xl" data-delay="1" data-en="Built for precision.">Un outil pensé pour la précision.</h2>
+      </div>
+      <p class="reveal max-w-sm text-muted" data-delay="2" data-en="Filling, dressing, robotic palletising and wrapping - every step under control.">Tirage, habillage, palettisation robotisée et filmage - chaque étape sous contrôle.</p>
+    </div>
+
+    <div class="mt-14 grid auto-rows-[300px] grid-cols-1 gap-3 sm:auto-rows-[280px] sm:grid-cols-2 md:auto-rows-[260px] md:grid-cols-4">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2">
+        <img src="photos/VEC_-9.jpg" alt="Bouteilles de vin blanc sur convoyeur" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-1">
+            <span data-en="Filling line">Ligne de tirage</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-1"><div><p data-en="Our filling lines handle 25,000 to 30,000 bottles a day, from airline quarters to magnums, in Burgundy or Bordeaux bottles, with screw cap or cork.">Nos lignes de tirage conditionnent 25 à 30 000 cols par jour, du quart aviation au magnum, en bouteilles bourgogne ou bordelaise, sous vis ou bouchon.</p></div></div>
+        </figcaption>
+      </figure>
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl md:row-span-2" data-delay="1">
+        <img src="photos/VEC_-14.jpg" alt="Tireuse MBF sous carter vitré" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-2">
+            <span data-en="MBF filler">Tireuse MBF</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-2"><div><p data-en="Enclosed behind glass, the filler works under controlled hygiene conditions, with a control plan at every station and full traceability.">Protégée sous carter vitré, la tireuse travaille en conditions d'hygiène maîtrisées, avec un plan de contrôle à chaque poste et une traçabilité complète.</p></div></div>
+        </figcaption>
+      </figure>
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl " data-delay="2">
+        <img src="photos/VEC_-25.jpg" alt="Filmeuse et palette de Bag in Box 3 L" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-3">
+            <span data-en="Wrapping">Filmage</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-3"><div><p data-en="Every pallet is wrapped and labelled before shipping. Here, 3 L Bag-in-Box: up to 16,000 BIB a day, i.e. 2 full trucks.">Chaque palette est filmée et étiquetée avant expédition. Ici, des Bag in Box 3 L : jusqu'à 16 000 BIB par jour, soit 2 camions complets.</p></div></div>
+        </figcaption>
+      </figure>
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl " data-delay="3">
+        <img src="photos/VEC_.jpg" alt="Palettisation robotisée et transpalette" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-4">
+            <span data-en="Robotic palletising">Palettisation robotisée</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-4"><div><p data-en="Automated palletising on Euro, VMF or CHEP pallets, then shipping organised to France, Europe and worldwide.">Palettisation automatisée sur palettes Europe, VMF ou CHEP, puis organisation des expéditions en France, en Europe et au grand export.</p></div></div>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUALITÉ & ENVIRONNEMENT ============ -->
+<section id="qualite" class="scroll-mt-18 py-24 lg:py-32">
+  <div class="mx-auto grid max-w-7xl gap-16 px-5 lg:grid-cols-12 lg:px-8">
+    <div class="lg:col-span-5">
+      <p class="eyebrow reveal" data-en="Certifications &amp; accreditations">Certifications &amp; habilitations</p>
+      <h2 class="h-section reveal mt-4" data-delay="1" data-en="Food-grade standards,<br>wine-grade care.">L'exigence de l'agroalimentaire, le soin du vin.</h2>
+      <p class="reveal mt-6 text-muted" data-delay="2" data-en="Approved operator for many French PDO and PGI appellations.">Opérateur habilité pour de nombreuses AOP et IGP françaises.</p>
+    </div>
+    <div class="lg:col-span-7">
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6">
+          <i data-lucide="badge-check" class="size-6 text-accent"></i>
+          <p class="mt-5 font-display text-xl font-semibold">FSSC 22000</p>
+          <p class="mt-1 text-sm text-muted" data-en="since 2019">depuis 2019</p>
+        </div>
+        <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="1">
+          <i data-lucide="shield-check" class="size-6 text-accent"></i>
+          <p class="mt-5 font-display text-xl font-semibold">HACCP</p>
+          <p class="mt-1 text-sm text-muted" data-en="since 2019">depuis 2019</p>
+        </div>
+        <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="2">
+          <i data-lucide="sprout" class="size-6 text-accent"></i>
+          <p class="mt-5 font-display text-xl font-semibold" data-en="Organic · MWOG">Bio · MWOG</p>
+          <p class="mt-1 text-sm text-muted" data-en="since 2021">depuis 2021</p>
+        </div>
+      </div>
+      <div class="reveal mt-4 flex flex-col gap-6 rounded-2xl border border-line bg-surface p-7 sm:flex-row sm:items-center" data-delay="2">
+        <span class="icon-tile"><i data-lucide="leaf" class="size-5"></i></span>
+        <div>
+          <h3 class="font-semibold" data-en="Environment">Environnement</h3>
+          <p class="mt-1 text-[15px] text-muted" data-en="Waste management (sorting, compaction) · On-site solar power generation.">Gestion des déchets (tri, compactage) · Production électrique par panneaux photovoltaïques.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT / DEVIS ============ -->
+<section id="contact" class="scroll-mt-18 pb-24 lg:pb-32">
+  <div class="mx-auto max-w-7xl px-5 lg:px-8">
+    <div class="reveal glow-card rounded-3xl">
+     <div class="glow-inner grid overflow-hidden bg-surface lg:grid-cols-2">
+      <div class="relative min-h-72 lg:min-h-full">
+        <img src="photos/VEC_.jpg" alt="Opérateur VEC déplaçant une palette" class="photo absolute inset-0 size-full object-cover" loading="lazy">
+      </div>
+      <div class="px-6 py-14 sm:px-12 lg:px-16 lg:py-20">
+        <p class="eyebrow" data-en="Let's talk about your project">Parlons de votre projet</p>
+        <h2 class="h-section mt-4" data-en="Free quote,<br>reply within 48 h.">Devis offert,<br>réponse sous 48 h.</h2>
+        <p class="mt-6 leading-relaxed text-muted" data-en="Volume, format, timing: tell us about your project in 2 minutes and a dedicated contact will get back to you.">Volume, format, calendrier : décrivez votre projet en 2 minutes, un interlocuteur dédié revient vers vous.</p>
+        <a href="https://form.typeform.com/to/XXXXXXXX" target="_blank" rel="noopener" class="btn-primary mt-9 !px-7 !py-4 !text-base">
+          <span data-en="Request my quote">Demander mon devis</span><i data-lucide="arrow-up-right" class="size-5"></i>
+        </a>
+        <dl class="mt-12 grid gap-6 border-t border-line pt-10 sm:grid-cols-2">
+          <div>
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted" data-en="Phone">Téléphone</dt>
+            <dd class="mt-2"><a href="tel:+33557000000" class="text-lg font-medium transition hover:text-accent">05 57 00 00 00</a></dd>
+          </div>
+          <div>
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted">E-mail</dt>
+            <dd class="mt-2"><a href="mailto:contact@vec33.com" class="text-lg font-medium transition hover:text-accent">contact@vec33.com</a></dd>
+          </div>
+          <div class="sm:col-span-2">
+            <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted" data-en="Address">Adresse</dt>
+            <dd class="mt-2 text-lg font-medium">2 Poumeyrade, 33870 Vayres</dd>
+          </div>
+        </dl>
+      </div>
+     </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-line bg-surface-2 text-sm text-muted">
+  <div class="mx-auto grid max-w-7xl gap-12 px-5 pt-16 pb-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8 lg:px-8">
+    <!-- Marque -->
+    <div class="sm:col-span-2 lg:col-span-5">
+      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage &amp; Conditionnement" class="logo-light h-14 w-auto">
+      <img src="logo-vec-dark.png" alt="VEC - Vayres Embouteillage &amp; Conditionnement" class="logo-dark h-14 w-auto">
+      <p class="mt-5 max-w-sm leading-relaxed" data-en="Contract bottling and packaging since 1997, between Bordeaux and Libourne. One partner from cellar to pallet.">Embouteillage et conditionnement à façon depuis 1997, entre Bordeaux et Libourne. Un seul interlocuteur, du chai à la palette.</p>
+      <ul class="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-fg">
+        <li class="rounded-full border border-line bg-surface px-3 py-1">FSSC 22000</li>
+        <li class="rounded-full border border-line bg-surface px-3 py-1">HACCP</li>
+        <li class="rounded-full border border-line bg-surface px-3 py-1" data-en="Organic · MWOG">Bio · MWOG</li>
+      </ul>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="lg:col-span-3" aria-label="Plan du site">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-fg" data-en="Explore">Explorer</p>
+      <ul class="mt-5 space-y-3">
+        <li><a href="#savoir-faire" class="transition hover:text-accent" data-en="About">Savoir-faire</a></li>
+        <li><a href="#conditionnement" class="transition hover:text-accent" data-en="Packaging">Conditionnement</a></li>
+        <li><a href="#services" class="transition hover:text-accent" data-en="Services">Services</a></li>
+        <li><a href="#galerie" class="transition hover:text-accent" data-en="Facility">Le site</a></li>
+        <li><a href="#qualite" class="transition hover:text-accent" data-en="Quality">Qualité</a></li>
+      </ul>
+    </nav>
+
+    <!-- Contact -->
+    <div class="lg:col-span-4">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-fg">Contact</p>
+      <ul class="mt-5 space-y-3">
+        <li class="flex items-start gap-3"><i data-lucide="map-pin" class="mt-0.5 size-4 shrink-0 text-accent"></i><span>2 Poumeyrade<br>33870 Vayres, France</span></li>
+        <li class="flex items-center gap-3"><i data-lucide="phone" class="size-4 shrink-0 text-accent"></i><a href="tel:+33557000000" class="transition hover:text-accent">05 57 00 00 00</a></li>
+        <li class="flex items-center gap-3"><i data-lucide="mail" class="size-4 shrink-0 text-accent"></i><a href="mailto:contact@vec33.com" class="transition hover:text-accent">contact@vec33.com</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Barre légale -->
+  <div class="border-t border-line">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <p>© 2026 VEC - Vayres Embouteillage &amp; Conditionnement</p>
+      <div class="flex gap-6">
+        <a href="#" class="transition hover:text-fg" data-en="Legal notice">Mentions légales</a>
+        <a href="#" class="transition hover:text-fg" data-en="Privacy">Confidentialité</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="mock-flag rounded-full bg-[#84bd1f] px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[#111315] shadow-lg">Maquette claire · données fictives</div>
+
+<script>
+  lucide.createIcons();
+
+  // Thème clair / sombre
+  document.querySelectorAll('.theme-toggle').forEach(b => b.addEventListener('click', () => {
+    const dark = document.documentElement.dataset.theme !== 'dark';
+    if (dark) document.documentElement.dataset.theme = 'dark'; else delete document.documentElement.dataset.theme;
+    try { localStorage.setItem('vec-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  }));
+
+  // Galerie : largeurs fermée / ouverte calculées en px pour une animation sans saut
+  const sizeCaps = () => document.querySelectorAll('.gallery-item').forEach(fig => {
+    const cap = fig.querySelector('.cap'), btn = cap.querySelector('.cap-btn');
+    const [title, plus] = btn.children, cs = getComputedStyle(btn);
+    const closed = Math.ceil(title.getBoundingClientRect().width + plus.getBoundingClientRect().width
+      + parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.columnGap || 12));
+    const open = Math.min(336, fig.clientWidth - 32);
+    cap.style.setProperty('--cap-closed', closed + 'px');
+    cap.style.setProperty('--cap-open', Math.max(open, closed) + 'px');
+  });
+  document.fonts.ready.then(sizeCaps); addEventListener('resize', sizeCaps);
+
+  // Galerie : ouverture des légendes au toucher / clic / clavier
+  document.querySelectorAll('.cap-btn').forEach(btn => btn.addEventListener('click', () => {
+    const fig = btn.closest('.gallery-item'), open = !fig.classList.contains('open');
+    document.querySelectorAll('.gallery-item.open').forEach(f => { f.classList.remove('open'); f.querySelector('.cap-btn').setAttribute('aria-expanded', 'false'); });
+    if (open) { fig.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+  }));
+
+  // Header au scroll
+  const header = document.getElementById('header');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Menu mobile
+  const menuBtn = document.getElementById('menuBtn'), mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('hidden') === false;
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+  // Révélation + compteurs
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fmt = n => n.toLocaleString(document.documentElement.lang === 'en' ? 'en-US' : 'fr-FR').replace(/ /g, ' ');
+  const countUp = el => {
+    if (reduced) return;
+    const to = +el.dataset.to, plain = el.hasAttribute('data-plain'), from = plain ? to - 28 : 0, t0 = performance.now(), d = 1600;
+    const step = t => {
+      const p = Math.min((t - t0) / d, 1), v = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+      el.textContent = plain ? v : fmt(v);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('in');
+    e.target.querySelectorAll('.count').forEach(countUp);
+    io.unobserve(e.target);
+  }), { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Bascule FR / EN
+  const setLang = lang => {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-en]').forEach(el => {
+      if (el.dataset.fr === undefined) el.dataset.fr = el.innerHTML;
+      el.innerHTML = lang === 'en' ? el.dataset.en : el.dataset.fr;
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+    document.querySelectorAll('.count').forEach(el => { if (!el.hasAttribute('data-plain')) el.textContent = fmt(+el.dataset.to); });
+    sizeCaps();
+  };
+  document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+</script>
+</body>
+</html>
