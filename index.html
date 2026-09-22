@@ -175,6 +175,11 @@
   .hero-veil { background: var(--veil-y), var(--veil-x); }
   @media (max-width: 767px) { .hero-veil { background: var(--veil-y), var(--veil-mobile); } }
   .hero-sub { color: var(--hero-sub); }
+  /* Listes des cartes Conditionnement : coche verte devant chaque point */
+  .checklist li { position: relative; padding-left: 1.6rem; }
+  .checklist li::before { content: ""; position: absolute; left: 0; top: .2em; width: 1rem; height: 1rem; background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat; }
   /* Bulles « Notre expertise » */
   .chip { display: flex; align-items: center; gap: .65rem; padding: .5rem 1.1rem .5rem .5rem; border-radius: 999px;
           border: 1px solid var(--line); background: var(--surface); font-weight: 500; font-size: .95rem; cursor: default;
@@ -353,7 +358,7 @@
         <span class="icon-tile"><i data-lucide="wine" class="size-5"></i></span>
         <h3 class="mt-6 font-display text-2xl font-semibold" data-en="Bottling">Mise en bouteille</h3>
         <p class="mt-1 text-sm font-medium text-accent" data-en="25–30,000 bottles / day">25 à 30 000 cols / jour</p>
-        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+        <ul class="checklist mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
           <li data-en="Airline quarter · 37.5 cL · 75 cL · magnum">Quart aviation · 37,5 cL · 75 cL · magnum</li>
           <li data-en="Burgundy &amp; Bordeaux bottles">Bourgogne et bordelaise</li>
           <li data-en="Screw cap &amp; cork">Vis et bouchon</li>
@@ -365,7 +370,7 @@
         <span class="icon-tile"><i data-lucide="package" class="size-5"></i></span>
         <h3 class="mt-6 font-display text-2xl font-semibold">Bag in Box</h3>
         <p class="mt-1 text-sm font-medium text-accent" data-en="16,000 BIB / day">16 000 BIB / jour</p>
-        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+        <ul class="checklist mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
           <li data-en="Slim format">Format slim</li>
           <li>3 L · 5 L · 10 L</li>
           <li data-en="Shipper case or quarter pallet">Carton de regroupement ou quart de palette</li>
@@ -376,7 +381,7 @@
         <span class="icon-tile"><i data-lucide="truck" class="size-5"></i></span>
         <h3 class="mt-6 font-display text-2xl font-semibold" data-en="Palletising &amp; shipping">Palettisation &amp; expédition</h3>
         <p class="mt-1 text-sm font-medium text-accent" data-en="France, Europe &amp; export">France, Europe &amp; grand export</p>
-        <ul class="mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
+        <ul class="checklist mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
           <li data-en="Euro, VMF, CHEP pallets">Palettes Europe, VMF, CHEP</li>
           <li data-en="Inbound &amp; outbound scheduling">Organisation des réceptions et expéditions</li>
           <li data-en="Flexitank unloading">Déchargement de flexitanks</li>
