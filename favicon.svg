@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="v" x1="6" y1="60" x2="63" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4f7f12"/>
+      <stop offset=".5" stop-color="#84bd1f"/>
+      <stop offset="1" stop-color="#b8de66"/>
+    </linearGradient>
+  </defs>
+  <!-- D'après le logo VEC : branche gauche droite et épaisse, arc ample qui s'aplatit vers la droite -->
+  <path fill="url(#v)" d="M4 10 L17 4.5 L19.5 45 C28 29 41 17 63 11.5 C46 24 31 40 9 60 Z"/>
+</svg>

@@ -2,8 +2,9 @@
 <html lang="fr" class="scroll-smooth">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VEC - Maquette claire</title>
+<title>VEC - Vayres Embouteillage &amp; Conditionnement</title>
 <meta name="description" content="Maquette de design (version claire) - VEC, Vayres Embouteillage & Conditionnement.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
@@ -16,6 +17,11 @@
     const t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('vec-theme');
     if (t === 'dark') document.documentElement.dataset.theme = 'dark';
   } catch (e) {}
+  // Essai de vert : ?vert=aa applique la variante à contraste renforcé (#47720f) ; par défaut, le vert classique
+  (function () {
+    if (new URLSearchParams(location.search).get('vert') === 'aa')
+      document.documentElement.style.setProperty('--green', '#47720f');
+  })();
   // Essai de police des titres : ?font=fraunces|cormorant|instrument|playfair|manrope|source (sinon Outfit)
   (function () {
     const F = {
@@ -50,10 +56,10 @@
     --fg: #1f2326;          /* texte principal */
     --muted: #5d6368;       /* texte secondaire */
     --line: #e3dfd4;
-    --accent: #4f7f12;      /* vert texte / icônes (contraste AA) */
+    --accent: var(--green, #4f7f12); /* vert du logo (choix validé) ; ?vert=aa donne la variante à contraste renforcé */
     --accent-bright: #84bd1f; /* vert logo - décor */
     --accent-soft: #edf3e0;
-    --btn: #4f7f12; --btn-fg: #ffffff; --btn-hover: #3e6a0b;
+    --btn: var(--green, #4f7f12); --btn-fg: #ffffff; --btn-hover: #3e6a0b;
     --header: rgba(255,255,255,.94);
     --shadow: 0 24px 48px -28px rgba(31,35,38,.28);
     /* Voile du hero : crème, dense à gauche, transparent à droite */
@@ -179,6 +185,21 @@
   .hero-veil { background: var(--veil-y), var(--veil-x); }
   @media (max-width: 767px) { .hero-veil { background: var(--veil-y), var(--veil-mobile); } }
   .hero-sub { color: var(--hero-sub); }
+  /* Confort tactile : cibles d'au moins 40 px sur écrans tactiles (audit responsive) */
+  .lang-btn { min-width: 2.75rem; min-height: 2.25rem; }
+  .btn-cta-sm { min-height: 2.5rem; }
+  @media (pointer: coarse) {
+    .cap-btn { min-height: 2.75rem; }
+    .lang-btn { min-height: 2.5rem; }
+    a[href^="tel:"], a[href^="mailto:"] { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  }
+  /* Carte de localisation cliquable (Google Maps) */
+  .map-card { box-shadow: var(--shadow);
+              transition: translate .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s; }
+  .map-card .icon-tile { transition: background-color .35s ease, color .35s ease; }
+  .map-card:hover, .map-card:focus-visible { translate: 0 -3px; border-color: var(--accent); }
+  .map-card:hover .icon-tile, .map-card:focus-visible .icon-tile { background: var(--btn); color: var(--btn-fg); }
+  @media (prefers-reduced-motion: reduce) { .map-card { transition: none; } .map-card:hover { translate: none; } }
   /* Boutons de devis : même langage de survol que les bulles « Notre expertise »
      (le bouton se soulève, la pastille de l'icône se remplit ; la flèche garde sa direction) */
   .btn-cta { gap: .75rem; padding: .4rem .4rem .4rem 1.4rem;
@@ -289,7 +310,10 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero relative isolate flex min-h-svh items-end overflow-hidden pt-28">
-  <img src="photos/VEC_-30.jpg" alt="Ligne d'embouteillage VEC à Vayres" class="photo hero-img absolute inset-0 -z-20 size-full object-cover object-[70%_center]">
+  <picture>
+    <source media="(max-width: 767px)" type="image/webp" sizes="min(210vw, 1080px)" srcset="img/VEC_-30-portrait-480.webp 480w, img/VEC_-30-portrait-720.webp 720w, img/VEC_-30-portrait-1080.webp 1080w">
+    <img srcset="img/VEC_-30-640.webp 640w, img/VEC_-30-1024.webp 1024w, img/VEC_-30-1600.webp 1600w, img/VEC_-30-2400.webp 2400w" sizes="min(190vw, 2400px)" src="img/VEC_-30-1600.jpg" alt="Ligne d'embouteillage VEC à Vayres" class="photo hero-img absolute inset-0 -z-20 size-full object-cover object-[70%_center]">
+  </picture>
   <div class="hero-veil absolute inset-0 -z-10"></div>
 
   <div class="mx-auto w-full max-w-7xl px-5 pb-8 lg:px-8 lg:pb-12">
@@ -321,8 +345,8 @@
         <p class="mt-2 text-sm text-muted" data-en="minimum<br>production run">minimum<br>de production</p>
       </div>
       <div class="p-5 lg:px-7 lg:py-6">
-        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="1997" data-plain>1997</span></p>
-        <p class="mt-2 text-sm text-muted" data-en="bottling expertise<br>in the Bordeaux area">savoir-faire<br>en Bordelais</p>
+        <p class="font-display text-3xl font-semibold text-accent sm:text-4xl lg:text-[2.6rem] leading-none"><span class="count" data-to="30">30</span> <span class="text-2xl" data-en="years">ans</span></p>
+        <p class="mt-2 text-sm text-muted" data-en="of technical<br>expertise">d'expertise<br>technique</p>
   </div>
   </div>
 </section>
@@ -334,8 +358,9 @@
       <p class="eyebrow reveal" data-en="Who we are">Qui sommes-nous</p>
       <h2 class="h-section reveal mt-4" data-delay="1" data-en="One partner,<br>from bulk to pallet.">Un seul interlocuteur,<br>du vrac à la palette.</h2>
       <div class="reveal mt-7 space-y-5 text-[17px] leading-relaxed text-muted" data-delay="2">
-        <p data-en="As a contract bottler, VEC links your wines to your customers: bulk reception and control, cellar preparation, bottling or Bag-in-Box, dressing, casing, palletising and shipping.">Embouteilleur à façon, VEC fait le lien entre vos produits et vos clients : réception et contrôle du vrac, préparation en chai, mise en bouteille ou en Bag in Box, habillage, mise en carton, palettisation et expédition.</p>
-        <p data-en="Specialists in still whites and rosés, we also buy bulk wine, advise on blends, source dry goods, track stock and bonded paperwork, and store your wines in our climate-controlled warehouses. One partner from cellar to pallet, in France, Europe and worldwide.">Spécialistes des blancs et rosés tranquilles, nous achetons aussi le vrac, conseillons les assemblages, sourçons les matières sèches, suivons les stocks et la régie, et stockons les vins dans nos entrepôts climatisés. Un seul interlocuteur du chai à la palette, en France, en Europe comme au grand export.</p>
+        <p data-en="As a contract bottler, VEC links your wines to your customers: bulk reception and control, cellar preparation, bottling or Bag-in-Box, dressing, casing, palletising and shipping. You get a certified industrial facility, a control plan and full traceability, without having to finance them.">Embouteilleur à façon, VEC fait le lien entre vos vins et vos clients : réception et contrôle du vrac, préparation en chai, mise en bouteille ou en Bag-in-Box, habillage, mise en carton, palettisation et expédition. Vous bénéficiez d'un outil industriel certifié, d'un plan de contrôle et d'une traçabilité complète, sans avoir à les financer.</p>
+        <p data-en="Based between Bordeaux and Libourne, we package 90,000 hL every year. Historically specialists in still white and rosé wines, we are just as comfortable with reds. Beyond bottling, we support you at every step: bulk purchasing to complete your volumes or adjust your blends, blending advice, dry goods sourcing, stock and excise paperwork monitoring, storage in climate-controlled warehouses.">Implantés entre Bordeaux et Libourne, nous conditionnons 90 000 hL chaque année. Historiquement spécialistes des vins blancs et rosés tranquilles, nous sommes tout aussi à l'aise avec les rouges. Au-delà de l'embouteillage, nous vous accompagnons à chaque étape : achat de vrac pour compléter vos volumes ou ajuster vos assemblages, conseil en assemblage, sourcing des matières sèches, suivi des stocks et des formalités de régie, stockage en entrepôts climatisés.</p>
+        <p class="font-medium text-fg" data-en="One single contact, from cellar to pallet, for France, Europe and worldwide export.">Un seul interlocuteur, du chai à la palette, pour la France, l'Europe et le Grand Export.</p>
       </div>
       <ul class="reveal mt-9 grid gap-3 sm:grid-cols-2" data-delay="3">
         <li class="flex items-start gap-3 text-sm font-medium"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-accent"></i><span data-en="Certified industrial line">Outil industriel certifié</span></li>
@@ -347,15 +372,17 @@
 
     <div class="relative lg:col-span-6">
       <div class="reveal overflow-hidden rounded-3xl">
-        <img src="photos/VEC_-11.jpg" alt="Opérateur chargeant des bouteilles vides sur la ligne" class="photo aspect-[4/5] w-full object-cover" loading="lazy">
+        <img srcset="img/VEC_-11-640.webp 640w, img/VEC_-11-1024.webp 1024w, img/VEC_-11-1600.webp 1600w" sizes="(min-width:1024px) 45vw, 100vw" src="img/VEC_-11-1600.jpg" alt="Opérateur chargeant des bouteilles vides sur la ligne" class="photo aspect-[4/5] w-full object-cover" loading="lazy">
       </div>
-      <div class="reveal absolute -bottom-8 left-4 max-w-[15rem] rounded-2xl border border-line bg-surface p-5 sm:-left-8" style="box-shadow: var(--shadow)" data-delay="2">
+      <a href="https://maps.app.goo.gl/Zfv2BkYLy1Wx5rAE7" target="_blank" rel="noopener"
+         class="map-card reveal absolute -bottom-8 left-4 block max-w-[15rem] rounded-2xl border border-line bg-surface p-5 sm:-left-8" data-delay="2">
         <div class="flex items-center gap-3">
           <span class="icon-tile !size-9"><i data-lucide="map-pin" class="size-4"></i></span>
           <p class="text-sm font-semibold leading-tight" data-en="Between Bordeaux<br>&amp; Libourne">Entre Bordeaux<br>&amp; Libourne</p>
         </div>
         <p class="mt-3 text-xs leading-relaxed text-muted" data-en="At the heart of the vineyard, 25 min from the Bordeaux ring road.">Au cœur du vignoble, à 25 min de la rocade bordelaise.</p>
-      </div>
+        <p class="mt-3 flex items-center gap-1.5 text-xs font-semibold text-accent"><span data-en="Open in Google Maps">Voir sur Google Maps</span><i data-lucide="arrow-up-right" class="size-3.5"></i></p>
+      </a>
     </div>
   </div>
 </section>
@@ -363,12 +390,10 @@
 <!-- ============ CONDITIONNEMENT ============ -->
 <section id="conditionnement" class="scroll-mt-18 border-y border-line bg-surface py-24 lg:py-32">
   <div class="mx-auto max-w-7xl px-5 lg:px-8">
-    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-      <div>
-        <p class="eyebrow reveal" data-en="Packaging">Conditionnement</p>
-        <h2 class="h-section reveal mt-4 max-w-2xl" data-delay="1" data-en="Every format,<br>at industrial pace.">Tous les formats,<br>à cadence industrielle.</h2>
-      </div>
-      <p class="reveal max-w-sm text-muted" data-delay="2" data-en="Minimum run: 50 hL. Special requests reviewed case by case.">Minimum de production : 50 hL. Demandes spéciales étudiées au cas par cas.</p>
+    <div class="max-w-2xl">
+      <p class="eyebrow reveal" data-en="Packaging">Conditionnement</p>
+      <h2 class="h-section reveal mt-4" data-delay="1" data-en="Every format,<br>at industrial pace.">Tous les formats,<br>à cadence industrielle.</h2>
+      <p class="reveal mt-6 text-lg text-muted" data-delay="2" data-en="Minimum run: 50 hL. Special requests reviewed case by case.">Minimum de production : 50 hL. Demandes spéciales étudiées au cas par cas.</p>
     </div>
 
     <div class="mt-14 grid gap-5 md:grid-cols-3">
@@ -382,7 +407,9 @@
           <li data-en="Screw cap &amp; cork">Vis et bouchon</li>
           <li data-en="Bottling / dressing, cork-finished &amp; re-dressing">Tirage, habillage, tiré-bouché et reprise TB</li>
           <li data-en="Upright cases of 6 or 12, automatic crates">Cartons debout de 6 ou 12, casiers en automatique</li>
+          <li data-en="Nitrogen or carbon dioxide inerting">Inertage azote ou gaz carbonique</li>
         </ul>
+        <p class="mt-5 text-[13px] italic text-muted" data-en="Other formats on request">Autres formats sur devis</p>
       </article>
       <article class="card reveal !bg-bg" data-delay="1">
         <span class="icon-tile"><i data-lucide="package" class="size-5"></i></span>
@@ -393,12 +420,14 @@
           <li>3 L · 5 L · 10 L</li>
           <li data-en="Shipper case or quarter pallet">Carton de regroupement ou quart de palette</li>
           <li data-en="2 full trucks of 33 pallets / day">2 camions complets de 33 palettes / jour</li>
+          <li data-en="Nitrogen or carbon dioxide inerting">Inertage azote ou gaz carbonique</li>
         </ul>
+        <p class="mt-5 text-[13px] italic text-muted" data-en="Other formats on request">Autres formats sur devis</p>
       </article>
       <article class="card reveal !bg-bg" data-delay="2">
         <span class="icon-tile"><i data-lucide="truck" class="size-5"></i></span>
         <h3 class="mt-6 font-display text-2xl font-semibold" data-en="Palletising &amp; shipping">Palettisation &amp; expédition</h3>
-        <p class="mt-1 text-sm font-medium text-accent" data-en="France, Europe &amp; export">France, Europe &amp; grand export</p>
+        <p class="mt-1 text-sm font-medium text-accent" data-en="France, Europe &amp; export">France, Europe &amp; Grand Export</p>
         <ul class="checklist mt-6 space-y-2.5 border-t border-line pt-6 text-[15px] text-muted">
           <li data-en="Euro, VMF, CHEP pallets">Palettes Europe, VMF, CHEP</li>
           <li data-en="Inbound &amp; outbound scheduling">Organisation des réceptions et expéditions</li>
@@ -411,8 +440,8 @@
     <!-- Carte dédiée : sans alcool (MASQUÉE pour l'instant : retirer la classe "hidden" pour la réafficher) -->
     <article class="hidden reveal mt-5 grid overflow-hidden rounded-2xl border border-accent/25 bg-accent-soft lg:grid-cols-2">
       <div class="relative min-h-72 lg:min-h-full">
-        <img src="photos/VEC_-14.jpg" alt="Tireuse MBF sous carter vitré" class="photo absolute inset-0 size-full object-cover" loading="lazy">
-        <span class="absolute left-6 top-6 rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#4f7f12] backdrop-blur">0,0 % – 0,5 %</span>
+        <img srcset="img/VEC_-14-640.webp 640w, img/VEC_-14-1024.webp 1024w, img/VEC_-14-1600.webp 1600w" sizes="(min-width:1024px) 50vw, 100vw" src="img/VEC_-14-1600.jpg" alt="Tireuse MBF sous carter vitré" class="photo absolute inset-0 size-full object-cover" loading="lazy">
+        <span class="absolute left-6 top-6 rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent backdrop-blur">0,0 % – 0,5 %</span>
       </div>
       <div class="p-8 sm:p-12 lg:p-14">
         <p class="eyebrow" data-en="Dedicated expertise">Expertise dédiée</p>
@@ -453,7 +482,7 @@
       <div class="reveal bg-surface p-8" data-delay="2">
         <span class="icon-tile"><i data-lucide="boxes" class="size-5"></i></span>
         <h3 class="mt-5 text-lg font-semibold" data-en="Dry goods">Matières sèches</h3>
-        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Full sourcing of bottles, closures, labels and cases.">Sourcing complet : verre, bouchage, étiquettes, cartons.</p>
+        <p class="mt-2 text-[15px] leading-relaxed text-muted" data-en="Reception of your own dry goods, or full sourcing.">Réception de vos matières sèches ou sourcing complet.</p>
       </div>
       <div class="reveal bg-surface p-8">
         <span class="icon-tile"><i data-lucide="clipboard-check" class="size-5"></i></span>
@@ -480,7 +509,7 @@
         <li class="chip"><span class="chip-icon"><i data-lucide="zap" class="size-4"></i></span><span data-en="Responsiveness">Réactivité</span></li>
         <li class="chip"><span class="chip-icon"><i data-lucide="ruler" class="size-4"></i></span><span data-en="Tailor-made projects">Projet sur mesure</span></li>
         <li class="chip"><span class="chip-icon"><i data-lucide="hand" class="size-4"></i></span><span data-en="Manual operations">Chantiers manuels</span></li>
-        <li class="chip"><span class="chip-icon"><i data-lucide="globe" class="size-4"></i></span><span data-en="France, Europe &amp; export">France, Europe &amp; grand export</span></li>
+        <li class="chip"><span class="chip-icon"><i data-lucide="globe" class="size-4"></i></span><span data-en="France, Europe &amp; export">France, Europe &amp; Grand Export</span></li>
       </ul>
     </div>
   </div>
@@ -489,17 +518,15 @@
 <!-- ============ GALERIE ============ -->
 <section id="galerie" class="scroll-mt-18 bg-surface-2 py-24 lg:py-32">
   <div class="mx-auto max-w-7xl px-5 lg:px-8">
-    <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-      <div>
-        <p class="eyebrow reveal" data-en="Our facility">Le site de Vayres</p>
-        <h2 class="h-section reveal mt-4 max-w-xl" data-delay="1" data-en="Built for precision.">Un outil pensé pour la précision.</h2>
-      </div>
-      <p class="reveal max-w-sm text-muted" data-delay="2" data-en="Filling, dressing, robotic palletising and wrapping - every step under control.">Tirage, habillage, palettisation robotisée et filmage - chaque étape sous contrôle.</p>
+    <div class="max-w-2xl">
+      <p class="eyebrow reveal" data-en="Our facility">Le site de Vayres</p>
+      <h2 class="h-section reveal mt-4" data-delay="1" data-en="Built for precision.">Un outil pensé pour la précision.</h2>
+      <p class="reveal mt-6 text-lg text-muted" data-delay="2" data-en="Filling, dressing, Bag-in-Box line, robotic palletising and wrapping - every step under control.">Tirage, habillage, chaîne Bag in Box, palettisation robotisée et filmage - chaque étape sous contrôle.</p>
     </div>
 
-    <div class="mt-14 grid auto-rows-[300px] grid-cols-1 gap-3 sm:auto-rows-[280px] sm:grid-cols-2 md:auto-rows-[260px] md:grid-cols-4">
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl md:col-span-2 md:row-span-2">
-        <img src="photos/VEC_-9.jpg" alt="Bouteilles de vin blanc sur convoyeur" class="photo size-full object-cover" loading="lazy">
+    <div class="mt-14 grid auto-rows-[300px] grid-cols-1 gap-3 sm:auto-rows-[280px] sm:grid-cols-2 lg:auto-rows-[260px] lg:grid-cols-5">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:col-span-2 lg:row-span-2">
+        <img srcset="img/VEC_-9-640.webp 640w, img/VEC_-9-1024.webp 1024w, img/VEC_-9-1600.webp 1600w" sizes="(min-width:1024px) 40vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-9-1600.jpg" alt="Bouteilles de vin blanc sur convoyeur" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-1">
             <span data-en="Filling line">Ligne de tirage</span>
@@ -508,8 +535,8 @@
           <div class="cap-body" id="cap-1"><div><p data-en="Our filling lines handle 25,000 to 30,000 bottles a day, from airline quarters to magnums, in Burgundy or Bordeaux bottles, with screw cap or cork.">Nos lignes de tirage conditionnent 25 à 30 000 cols par jour, du quart aviation au magnum, en bouteilles bourgogne ou bordelaise, sous vis ou bouchon.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl md:row-span-2" data-delay="1">
-        <img src="photos/VEC_-14.jpg" alt="Tireuse MBF sous carter vitré" class="photo size-full object-cover" loading="lazy">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:row-span-2" data-delay="1">
+        <img srcset="img/VEC_-14-640.webp 640w, img/VEC_-14-1024.webp 1024w" sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-14-1600.jpg" alt="Tireuse MBF sous carter vitré" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-2">
             <span data-en="MBF filler">Tireuse MBF</span>
@@ -518,8 +545,18 @@
           <div class="cap-body" id="cap-2"><div><p data-en="Enclosed behind glass, the filler works under controlled hygiene conditions, with a control plan at every station and full traceability.">Protégée sous carter vitré, la tireuse travaille en conditions d'hygiène maîtrisées, avec un plan de contrôle à chaque poste et une traçabilité complète.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl " data-delay="2">
-        <img src="photos/VEC_-25.jpg" alt="Filmeuse et palette de Bag in Box 3 L" class="photo size-full object-cover" loading="lazy">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl" data-delay="2">
+        <img srcset="img/VEC_-19-640.webp 640w, img/VEC_-19-1024.webp 1024w" sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-19-1600.jpg" alt="Chaîne Bag in Box : cartons sur convoyeur" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-bib">
+            <span data-en="Bag-in-Box line">Chaîne Bag in Box</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-bib"><div><p data-en="Filling, capping and casing of 3, 5 and 10 L slim Bag-in-Box, up to 16,000 BIB a day.">Remplissage, bouchage et mise en carton des Bag in Box slim 3, 5 et 10 L, jusqu'à 16 000 BIB par jour.</p></div></div>
+        </figcaption>
+      </figure>
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl " data-delay="3">
+        <img srcset="img/VEC_-25-640.webp 640w, img/VEC_-25-1024.webp 1024w" sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-25-1600.jpg" alt="Filmeuse et palette de Bag in Box 3 L" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-3">
             <span data-en="Wrapping">Filmage</span>
@@ -528,14 +565,14 @@
           <div class="cap-body" id="cap-3"><div><p data-en="Every pallet is wrapped and labelled before shipping. Here, 3 L Bag-in-Box: up to 16,000 BIB a day, i.e. 2 full trucks.">Chaque palette est filmée et étiquetée avant expédition. Ici, des Bag in Box 3 L : jusqu'à 16 000 BIB par jour, soit 2 camions complets.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl " data-delay="3">
-        <img src="photos/VEC_.jpg" alt="Palettisation robotisée et transpalette" class="photo size-full object-cover" loading="lazy">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:col-span-2" data-delay="3">
+        <img srcset="img/VEC_-640.webp 640w, img/VEC_-1024.webp 1024w, img/VEC_-1600.webp 1600w" sizes="(min-width:1024px) 40vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-1600.jpg" alt="Palettisation robotisée et transpalette" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-4">
             <span data-en="Robotic palletising">Palettisation robotisée</span>
             <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
           </button>
-          <div class="cap-body" id="cap-4"><div><p data-en="Automated palletising on Euro, VMF or CHEP pallets, then shipping organised to France, Europe and worldwide.">Palettisation automatisée sur palettes Europe, VMF ou CHEP, puis organisation des expéditions en France, en Europe et au grand export.</p></div></div>
+          <div class="cap-body" id="cap-4"><div><p data-en="Automated palletising on Euro, VMF or CHEP pallets, then shipping organised to France, Europe and worldwide.">Palettisation automatisée sur palettes Europe, VMF ou CHEP, puis organisation des expéditions en France, en Europe et au Grand Export.</p></div></div>
         </figcaption>
       </figure>
     </div>
@@ -551,7 +588,7 @@
       <p class="reveal mt-6 text-muted" data-delay="2" data-en="Approved operator for many French PDO and PGI appellations.">Opérateur habilité pour de nombreuses AOP et IGP françaises.</p>
     </div>
     <div class="lg:col-span-7">
-      <div class="grid gap-4 sm:grid-cols-3">
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6">
           <i data-lucide="badge-check" class="size-6 text-accent"></i>
           <p class="mt-5 font-display text-xl font-semibold">FSSC 22000</p>
@@ -564,8 +601,13 @@
         </div>
         <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="2">
           <i data-lucide="sprout" class="size-6 text-accent"></i>
-          <p class="mt-5 font-display text-xl font-semibold" data-en="Organic · MWOG">Bio · MWOG</p>
-          <p class="mt-1 text-sm text-muted" data-en="since 2021">depuis 2021</p>
+          <p class="mt-5 font-display text-xl font-semibold" data-en="Organic">Bio</p>
+          <p class="mt-1 text-sm text-muted" data-en="since 2000">depuis 2000</p>
+        </div>
+        <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="3">
+          <i data-lucide="leaf" class="size-6 text-accent"></i>
+          <p class="mt-5 font-display text-xl font-semibold">MWOG</p>
+          <p class="mt-1 text-sm text-muted" data-en="since 2004">depuis 2004</p>
         </div>
       </div>
       <div class="reveal mt-4 flex flex-col gap-6 rounded-2xl border border-line bg-surface p-7 sm:flex-row sm:items-center" data-delay="2">
@@ -585,7 +627,7 @@
     <div class="reveal glow-card rounded-3xl">
      <div class="glow-inner grid overflow-hidden bg-surface lg:grid-cols-2">
       <div class="relative min-h-72 lg:min-h-full">
-        <img src="photos/VEC_.jpg" alt="Opérateur VEC déplaçant une palette" class="photo absolute inset-0 size-full object-cover" loading="lazy">
+        <img srcset="img/VEC_-30-640.webp 640w, img/VEC_-30-1024.webp 1024w, img/VEC_-30-1600.webp 1600w" sizes="(min-width:1024px) 50vw, 100vw" src="img/VEC_-30-1600.jpg" alt="Ligne d'embouteillage VEC à Vayres" class="photo absolute inset-0 size-full object-cover" loading="lazy">
       </div>
       <div class="px-6 py-14 sm:px-12 lg:px-16 lg:py-20">
         <p class="eyebrow" data-en="Let's talk about your project">Parlons de votre projet</p>
@@ -605,7 +647,7 @@
           </div>
           <div class="sm:col-span-2">
             <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted" data-en="Address">Adresse</dt>
-            <dd class="mt-2 text-lg font-medium">2 Poumeyrade, 33870 Vayres</dd>
+            <dd class="mt-2"><a href="https://maps.app.goo.gl/Zfv2BkYLy1Wx5rAE7" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-lg font-medium transition hover:text-accent">2 Poumeyrade, 33870 Vayres<i data-lucide="arrow-up-right" class="size-4"></i></a></dd>
           </div>
         </dl>
       </div>
@@ -626,7 +668,8 @@
       <ul class="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-fg">
         <li class="rounded-full border border-line bg-surface px-3 py-1">FSSC 22000</li>
         <li class="rounded-full border border-line bg-surface px-3 py-1">HACCP</li>
-        <li class="rounded-full border border-line bg-surface px-3 py-1" data-en="Organic · MWOG">Bio · MWOG</li>
+        <li class="rounded-full border border-line bg-surface px-3 py-1" data-en="Organic">Bio</li>
+        <li class="rounded-full border border-line bg-surface px-3 py-1">MWOG</li>
       </ul>
     </div>
 
@@ -646,7 +689,7 @@
     <div class="lg:col-span-4">
       <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-fg">Contact</p>
       <ul class="mt-5 space-y-3">
-        <li class="flex items-start gap-3"><i data-lucide="map-pin" class="mt-0.5 size-4 shrink-0 text-accent"></i><span>2 Poumeyrade<br>33870 Vayres, France</span></li>
+        <li class="flex items-start gap-3"><i data-lucide="map-pin" class="mt-0.5 size-4 shrink-0 text-accent"></i><a href="https://maps.app.goo.gl/Zfv2BkYLy1Wx5rAE7" target="_blank" rel="noopener" class="transition hover:text-accent">2 Poumeyrade<br>33870 Vayres, France</a></li>
         <li class="flex items-center gap-3"><i data-lucide="phone" class="size-4 shrink-0 text-accent"></i><a href="tel:+33557000000" class="transition hover:text-accent">05 57 00 00 00</a></li>
         <li class="flex items-center gap-3"><i data-lucide="mail" class="size-4 shrink-0 text-accent"></i><a href="mailto:contact@vec33.com" class="transition hover:text-accent">contact@vec33.com</a></li>
       </ul>
