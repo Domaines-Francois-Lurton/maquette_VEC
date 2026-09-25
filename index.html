@@ -11,12 +11,7 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-<!-- Thème appliqué avant le rendu (évite le flash) : ?theme=dark|light, sinon choix mémorisé, sinon clair -->
 <script>
-  try {
-    const t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('vec-theme');
-    if (t === 'dark') document.documentElement.dataset.theme = 'dark';
-  } catch (e) {}
   // Essai de vert : ?vert=aa applique la variante à contraste renforcé (#47720f) ; par défaut, le vert classique
   (function () {
     if (new URLSearchParams(location.search).get('vert') === 'aa')
@@ -68,26 +63,6 @@
     --veil-mobile: rgba(247,245,239,.84);
     --hero-sub: #4f7f12;
     color-scheme: light;
-  }
-  /* ---------- Jetons de couleur : sombre ---------- */
-  :root[data-theme="dark"] {
-    --bg: #111315;
-    --surface: #181b1e;
-    --surface-2: #1d2124;
-    --fg: #f2f0e9;
-    --muted: #a3a9ae;
-    --line: #2b3035;
-    --accent: #a4d65a;
-    --accent-bright: #84bd1f;
-    --accent-soft: rgba(132,189,31,.12);
-    --btn: #84bd1f; --btn-fg: #111315; --btn-hover: #9ccf3a;
-    --header: rgba(17,19,21,.86);
-    --shadow: 0 24px 48px -28px rgba(0,0,0,.7);
-    --veil-x: linear-gradient(90deg, rgba(17,19,21,.85) 0%, rgba(17,19,21,.55) 45%, rgba(17,19,21,.15) 100%);
-    --veil-y: linear-gradient(to top, #111315 0%, rgba(17,19,21,.7) 35%, rgba(17,19,21,.2) 100%);
-    --veil-mobile: rgba(17,19,21,.72);
-    --hero-sub: rgba(242,240,233,.6);
-    color-scheme: dark;
   }
 </style>
 
@@ -146,7 +121,6 @@
   .gallery-item:hover img { transform: scale(1.04); }
   /* Légendes de la galerie : l'étiquette s'agrandit en carte (survol / focus / toucher) */
   :root { --cap-bg: rgba(255,255,255,.9); --cap-fg: #1f2326; --cap-muted: #4a5055; }
-  :root[data-theme="dark"] { --cap-bg: rgba(24,27,30,.86); --cap-fg: #f2f0e9; --cap-muted: #b4bac0; }
   .cap { position: absolute; left: 1rem; bottom: 1rem; max-width: calc(100% - 2rem); border-radius: 1.25rem;
          background: var(--cap-bg); color: var(--cap-fg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
          box-shadow: 0 10px 30px -14px rgba(0,0,0,.45); overflow: hidden;
@@ -176,15 +150,14 @@
   #header { background: var(--header); transition: box-shadow .3s, background-color .4s; }
   #header.scrolled { box-shadow: 0 1px 0 var(--line), 0 12px 32px -24px rgba(0,0,0,.35); }
   .lang-btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-  /* Logo et icône selon le thème */
-  .logo-dark, .icon-sun { display: none; }
-  [data-theme="dark"] .logo-light, [data-theme="dark"] .icon-moon { display: none; }
-  [data-theme="dark"] .logo-dark, [data-theme="dark"] .icon-sun { display: block; }
-  /* Photos un peu adoucies en sombre */
-  [data-theme="dark"] .photo { filter: brightness(.92); }
   .hero-veil { background: var(--veil-y), var(--veil-x); }
   @media (max-width: 767px) { .hero-veil { background: var(--veil-y), var(--veil-mobile); } }
   .hero-sub { color: var(--hero-sub); }
+  /* Lien e-mail « demande sur mesure » sous le bouton de devis */
+  .mail-link { font-weight: 600; color: var(--accent); text-decoration: underline; text-underline-offset: 3px;
+               text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+               transition: text-decoration-color .3s ease; }
+  .mail-link:hover, .mail-link:focus-visible { text-decoration-color: var(--accent); }
   /* Confort tactile : cibles d'au moins 40 px sur écrans tactiles (audit responsive) */
   .lang-btn { min-width: 2.75rem; min-height: 2.25rem; }
   .btn-cta-sm { min-height: 2.5rem; }
@@ -260,8 +233,7 @@
 <header id="header" class="fixed inset-x-0 top-0 z-50 backdrop-blur-md">
   <div class="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-5 lg:px-8">
     <a href="#top" class="shrink-0" aria-label="VEC - accueil">
-      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage & Conditionnement" class="logo-light h-12 w-auto">
-      <img src="logo-vec-dark.png" alt="VEC - Vayres Embouteillage & Conditionnement" class="logo-dark h-12 w-auto">
+      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage & Conditionnement" class="h-12 w-auto">
     </a>
 
     <nav class="hidden items-center gap-8 lg:flex" aria-label="Navigation principale">
@@ -277,10 +249,6 @@
         <button class="lang-btn rounded-full px-2.5 py-1 transition" data-lang="fr" aria-pressed="true">FR</button>
         <button class="lang-btn rounded-full px-2.5 py-1 transition" data-lang="en" aria-pressed="false">EN</button>
       </div>
-      <button class="theme-toggle pill-btn" aria-label="Basculer le thème clair / sombre" title="Clair / sombre">
-        <i data-lucide="moon" class="icon-moon size-[18px]"></i>
-        <i data-lucide="sun" class="icon-sun size-[18px]"></i>
-      </button>
       <a href="#contact" class="btn-primary btn-cta btn-cta-sm hidden sm:inline-flex"><span data-en="Request a quote">Demander un devis</span><span class="cta-icon" aria-hidden="true"><i data-lucide="arrow-right" class="size-3.5"></i></span></a>
       <button id="menuBtn" class="pill-btn lg:hidden" aria-label="Menu" aria-expanded="false">
         <i data-lucide="menu" class="size-5"></i>
@@ -372,7 +340,7 @@
 
     <div class="relative lg:col-span-6">
       <div class="reveal overflow-hidden rounded-3xl">
-        <img srcset="img/VEC_-11-640.webp 640w, img/VEC_-11-1024.webp 1024w, img/VEC_-11-1600.webp 1600w" sizes="(min-width:1024px) 45vw, 100vw" src="img/VEC_-11-1600.jpg" alt="Opérateur chargeant des bouteilles vides sur la ligne" class="photo aspect-[4/5] w-full object-cover" loading="lazy">
+        <img srcset="img/VEC_-00-640.webp 640w, img/VEC_-00-1024.webp 1024w, img/VEC_-00-1600.webp 1600w" sizes="(min-width:1024px) 45vw, 100vw" src="img/VEC_-00-1600.jpg" alt="Bouteilles de vin blanc sur la ligne d'embouteillage VEC" class="photo aspect-[4/5] w-full object-cover" loading="lazy">
       </div>
       <a href="https://maps.app.goo.gl/Zfv2BkYLy1Wx5rAE7" target="_blank" rel="noopener"
          class="map-card reveal absolute -bottom-8 left-4 block max-w-[15rem] rounded-2xl border border-line bg-surface p-5 sm:-left-8" data-delay="2">
@@ -524,8 +492,8 @@
       <p class="reveal mt-6 text-lg text-muted" data-delay="2" data-en="Filling, dressing, Bag-in-Box line, robotic palletising and wrapping - every step under control.">Tirage, habillage, chaîne Bag in Box, palettisation robotisée et filmage - chaque étape sous contrôle.</p>
     </div>
 
-    <div class="mt-14 grid auto-rows-[300px] grid-cols-1 gap-3 sm:auto-rows-[280px] sm:grid-cols-2 lg:auto-rows-[260px] lg:grid-cols-5">
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:col-span-2 lg:row-span-2">
+    <div class="mt-14 grid auto-rows-[300px] grid-cols-1 gap-3 sm:auto-rows-[280px] sm:grid-cols-2 lg:grid-cols-3 xl:auto-rows-[260px] xl:grid-cols-6">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl xl:col-span-2 xl:row-span-2">
         <img srcset="img/VEC_-9-640.webp 640w, img/VEC_-9-1024.webp 1024w, img/VEC_-9-1600.webp 1600w" sizes="(min-width:1024px) 40vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-9-1600.jpg" alt="Bouteilles de vin blanc sur convoyeur" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-1">
@@ -535,7 +503,7 @@
           <div class="cap-body" id="cap-1"><div><p data-en="Our filling lines handle 25,000 to 30,000 bottles a day, from airline quarters to magnums, in Burgundy or Bordeaux bottles, with screw cap or cork.">Nos lignes de tirage conditionnent 25 à 30 000 cols par jour, du quart aviation au magnum, en bouteilles bourgogne ou bordelaise, sous vis ou bouchon.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:row-span-2" data-delay="1">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl xl:row-span-2" data-delay="1">
         <img srcset="img/VEC_-14-640.webp 640w, img/VEC_-14-1024.webp 1024w" sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-14-1600.jpg" alt="Tireuse MBF sous carter vitré" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-2">
@@ -545,7 +513,17 @@
           <div class="cap-body" id="cap-2"><div><p data-en="Enclosed behind glass, the filler works under controlled hygiene conditions, with a control plan at every station and full traceability.">Protégée sous carter vitré, la tireuse travaille en conditions d'hygiène maîtrisées, avec un plan de contrôle à chaque poste et une traçabilité complète.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl" data-delay="2">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl xl:col-span-2" data-delay="2">
+        <img srcset="img/VEC_-02-640.webp 640w, img/VEC_-02-1024.webp 1024w, img/VEC_-02-1600.webp 1600w" sizes="(min-width:1024px) 34vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-02-1600.jpg" alt="Tireuse Bag in Box à double tête" class="photo size-full object-cover" loading="lazy">
+        <figcaption class="cap">
+          <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-bib2">
+            <span data-en="Twin-head BIB filler">Tireuse BIB double tête</span>
+            <span class="cap-plus" aria-hidden="true"><i data-lucide="plus" class="size-3.5"></i></span>
+          </button>
+          <div class="cap-body" id="cap-bib2"><div><p data-en="Twin-head Bag-in-Box filler: two filling stations in parallel for 3, 5 and 10 L formats.">Tireuse Bag in Box à double tête : deux postes de remplissage en parallèle, pour les formats 3, 5 et 10 L.</p></div></div>
+        </figcaption>
+      </figure>
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl" data-delay="3">
         <img srcset="img/VEC_-19-640.webp 640w, img/VEC_-19-1024.webp 1024w" sizes="(min-width:1024px) 20vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-19-1600.jpg" alt="Chaîne Bag in Box : cartons sur convoyeur" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-bib">
@@ -565,7 +543,7 @@
           <div class="cap-body" id="cap-3"><div><p data-en="Every pallet is wrapped and labelled before shipping. Here, 3 L Bag-in-Box: up to 16,000 BIB a day, i.e. 2 full trucks.">Chaque palette est filmée et étiquetée avant expédition. Ici, des Bag in Box 3 L : jusqu'à 16 000 BIB par jour, soit 2 camions complets.</p></div></div>
         </figcaption>
       </figure>
-      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl lg:col-span-2" data-delay="3">
+      <figure class="gallery-item reveal relative overflow-hidden rounded-2xl xl:col-span-2" data-delay="3">
         <img srcset="img/VEC_-640.webp 640w, img/VEC_-1024.webp 1024w, img/VEC_-1600.webp 1600w" sizes="(min-width:1024px) 40vw, (min-width:640px) 50vw, 100vw" src="img/VEC_-1600.jpg" alt="Palettisation robotisée et transpalette" class="photo size-full object-cover" loading="lazy">
         <figcaption class="cap">
           <button type="button" class="cap-btn" aria-expanded="false" aria-controls="cap-4">
@@ -588,7 +566,7 @@
       <p class="reveal mt-6 text-muted" data-delay="2" data-en="Approved operator for many French PDO and PGI appellations.">Opérateur habilité pour de nombreuses AOP et IGP françaises.</p>
     </div>
     <div class="lg:col-span-7">
-      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div class="grid gap-4 sm:grid-cols-3">
         <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6">
           <i data-lucide="badge-check" class="size-6 text-accent"></i>
           <p class="mt-5 font-display text-xl font-semibold">FSSC 22000</p>
@@ -601,20 +579,15 @@
         </div>
         <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="2">
           <i data-lucide="sprout" class="size-6 text-accent"></i>
-          <p class="mt-5 font-display text-xl font-semibold" data-en="Organic">Bio</p>
+          <p class="mt-5 font-display text-xl font-semibold" data-en="BIO - Equi USA">BIO - Equi USA</p>
           <p class="mt-1 text-sm text-muted" data-en="since 2000">depuis 2000</p>
-        </div>
-        <div class="reveal rounded-2xl border border-accent/25 bg-accent-soft p-6" data-delay="3">
-          <i data-lucide="leaf" class="size-6 text-accent"></i>
-          <p class="mt-5 font-display text-xl font-semibold">MWOG</p>
-          <p class="mt-1 text-sm text-muted" data-en="since 2004">depuis 2004</p>
         </div>
       </div>
       <div class="reveal mt-4 flex flex-col gap-6 rounded-2xl border border-line bg-surface p-7 sm:flex-row sm:items-center" data-delay="2">
         <span class="icon-tile"><i data-lucide="leaf" class="size-5"></i></span>
         <div>
           <h3 class="font-semibold" data-en="Environment">Environnement</h3>
-          <p class="mt-1 text-[15px] text-muted" data-en="Waste management (sorting, compaction) · On-site solar power generation.">Gestion des déchets (tri, compactage) · Production électrique par panneaux photovoltaïques.</p>
+          <p class="mt-1 text-[15px] text-muted" data-en="Waste management (sorting, compaction)<br>On-site solar power generation.">Gestion des déchets (tri, compactage)<br>Production électrique par panneaux photovoltaïques.</p>
         </div>
       </div>
     </div>
@@ -636,6 +609,7 @@
         <a href="https://form.typeform.com/to/XXXXXXXX" target="_blank" rel="noopener" class="btn-primary btn-cta btn-cta-lg mt-9">
           <span data-en="Request my quote">Demander mon devis</span><span class="cta-icon" aria-hidden="true"><i data-lucide="arrow-right" class="size-4"></i></span>
         </a>
+        <p class="mt-6 max-w-md text-[15px] leading-relaxed text-muted" data-en="Custom project, special format or unusual volume? &lt;a href=&quot;mailto:contact@vec33.com?subject=Custom%20packaging%20enquiry&body=Hello%2C%0A%0AWe%20would%20like%20to%20discuss%20a%20custom%20packaging%20project.%0A%0A-%20Product%20type%3A%20%0A-%20Estimated%20volume%20%28hL%29%3A%20%0A-%20Format%3A%20%0A-%20Dressing%20/%20dry%20goods%3A%20%0A-%20Target%20timing%3A%20%0A-%20Specific%20requirements%3A%20%0A%0AThank%20you%20for%20getting%20back%20to%20us.%0A&quot; class=&quot;mail-link&quot;&gt;Write to us at contact@vec33.com&lt;/a&gt;">Projet sur mesure, format spécial ou volume particulier ? <a href="mailto:contact@vec33.com?subject=Demande%20sur%20mesure&body=Bonjour%2C%0A%0ANous%20souhaitons%20%C3%A9tudier%20un%20conditionnement%20sur%20mesure.%0A%0A-%20Type%20de%20produit%20%3A%20%0A-%20Volume%20estim%C3%A9%20%28hL%29%20%3A%20%0A-%20Format%20souhait%C3%A9%20%3A%20%0A-%20Habillage%20/%20mati%C3%A8res%20s%C3%A8ches%20%3A%20%0A-%20D%C3%A9lai%20envisag%C3%A9%20%3A%20%0A-%20Particularit%C3%A9s%20%3A%20%0A%0AMerci%20de%20nous%20recontacter.%0A" class="mail-link">Écrivez-nous à contact@vec33.com</a></p>
         <dl class="mt-12 grid gap-6 border-t border-line pt-10 sm:grid-cols-2">
           <div>
             <dt class="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted" data-en="Phone">Téléphone</dt>
@@ -662,14 +636,12 @@
   <div class="mx-auto grid max-w-7xl gap-12 px-5 pt-16 pb-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8 lg:px-8">
     <!-- Marque -->
     <div class="sm:col-span-2 lg:col-span-5">
-      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage &amp; Conditionnement" class="logo-light h-14 w-auto">
-      <img src="logo-vec-dark.png" alt="VEC - Vayres Embouteillage &amp; Conditionnement" class="logo-dark h-14 w-auto">
+      <img src="logo-vec.png" alt="VEC - Vayres Embouteillage &amp; Conditionnement" class="h-14 w-auto">
       <p class="mt-5 max-w-sm leading-relaxed" data-en="Contract bottling and packaging since 1997, between Bordeaux and Libourne. One partner from cellar to pallet.">Embouteillage et conditionnement à façon depuis 1997, entre Bordeaux et Libourne. Un seul interlocuteur, du chai à la palette.</p>
       <ul class="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-fg">
         <li class="rounded-full border border-line bg-surface px-3 py-1">FSSC 22000</li>
         <li class="rounded-full border border-line bg-surface px-3 py-1">HACCP</li>
-        <li class="rounded-full border border-line bg-surface px-3 py-1" data-en="Organic">Bio</li>
-        <li class="rounded-full border border-line bg-surface px-3 py-1">MWOG</li>
+        <li class="rounded-full border border-line bg-surface px-3 py-1">BIO - Equi USA</li>
       </ul>
     </div>
 
@@ -711,13 +683,6 @@
 
 <script>
   lucide.createIcons();
-
-  // Thème clair / sombre
-  document.querySelectorAll('.theme-toggle').forEach(b => b.addEventListener('click', () => {
-    const dark = document.documentElement.dataset.theme !== 'dark';
-    if (dark) document.documentElement.dataset.theme = 'dark'; else delete document.documentElement.dataset.theme;
-    try { localStorage.setItem('vec-theme', dark ? 'dark' : 'light'); } catch (e) {}
-  }));
 
   // Galerie : largeurs fermée / ouverte calculées en px pour une animation sans saut
   const sizeCaps = () => document.querySelectorAll('.gallery-item').forEach(fig => {
